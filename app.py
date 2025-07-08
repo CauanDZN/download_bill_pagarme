@@ -1,4 +1,4 @@
-from quart import Quart, jsonify
+from quart import Quart, send_file, abort
 import asyncio
 import os
 import re
@@ -29,18 +29,22 @@ async def download_pdf_content(url, max_retries=3):
             await page.pdf({'path': pdf_file_path, 'format': 'A4'})
             await browser.close()
             print(f"✅ PDF salvo em {pdf_file_path}")
-            return {"status": "sucesso", "path": pdf_file_path}
+            return pdf_file_path
         except Exception as e:
             print(f"❌ Erro ao baixar PDF: {e}")
             attempt += 1
             await asyncio.sleep(2)
-    return {"status": "falha", "mensagem": f"Não foi possível baixar o PDF após {max_retries} tentativas."}
+    return None
 
 @app.route("/boletos/<boleto_id>", methods=["GET"])
 async def baixar_boleto(boleto_id):
     url_boleto = f"https://api.pagar.me/1/boletos/{boleto_id}"
-    resultado = await download_pdf_content(url_boleto)
-    return jsonify(resultado)
+    pdf_path = await download_pdf_content(url_boleto)
+
+    if pdf_path and os.path.exists(pdf_path):
+        return await send_file(pdf_path, as_attachment=True, download_name=os.path.basename(pdf_path))
+    else:
+        abort(404, description="Não foi possível gerar o boleto PDF.")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
