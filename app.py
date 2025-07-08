@@ -42,7 +42,11 @@ async def baixar_boleto(boleto_id):
     pdf_path = await download_pdf_content(url_boleto)
 
     if pdf_path and os.path.exists(pdf_path):
-        return await send_file(pdf_path, as_attachment=True, download_name=os.path.basename(pdf_path))
+        return await send_file(
+            pdf_path,
+            as_attachment=True,
+            attachment_filename=os.path.basename(pdf_path)
+        )
     else:
         abort(404, description="Não foi possível gerar o boleto PDF.")
 
