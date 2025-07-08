@@ -1,0 +1,5 @@
+flask
+asyncio
+aiohttp
+requests
+pyppeteer
