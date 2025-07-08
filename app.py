@@ -1,11 +1,11 @@
-from flask import Flask, jsonify
+from quart import Quart, jsonify
 import asyncio
 import os
 import re
 from datetime import datetime
 from pyppeteer import launch
 
-app = Flask(__name__)
+app = Quart(__name__)
 
 def sanitize_filename(filename):
     return re.sub(r'[<>:"/\\|?*]', '_', filename)
@@ -37,14 +37,10 @@ async def download_pdf_content(url, max_retries=3):
     return {"status": "falha", "mensagem": f"Não foi possível baixar o PDF após {max_retries} tentativas."}
 
 @app.route("/boletos/<boleto_id>", methods=["GET"])
-def baixar_boleto(boleto_id):
+async def baixar_boleto(boleto_id):
     url_boleto = f"https://api.pagar.me/1/boletos/{boleto_id}"
-
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    resultado = loop.run_until_complete(download_pdf_content(url_boleto))
-
+    resultado = await download_pdf_content(url_boleto)
     return jsonify(resultado)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    app.run(host="0.0.0.0", port=5000)
