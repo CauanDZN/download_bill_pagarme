@@ -40,7 +40,9 @@ async def download_pdf_content(url, max_retries=3):
 def baixar_boleto(boleto_id):
     url_boleto = f"https://api.pagar.me/1/boletos/{boleto_id}"
 
-    resultado = asyncio.run(download_pdf_content(url_boleto))
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    resultado = loop.run_until_complete(download_pdf_content(url_boleto))
 
     return jsonify(resultado)
 
