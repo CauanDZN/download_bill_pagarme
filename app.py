@@ -15,9 +15,8 @@ async def download_pdf_content(url, max_retries=3):
     while attempt < max_retries:
         try:
             browser = await launch(
-                executablePath='C:/Program Files/Google/Chrome/Application/chrome.exe',
                 headless=True,
-                args=['--no-sandbox']
+                args=['--no-sandbox', '--disable-setuid-sandbox']
             )
             page = await browser.newPage()
             await page.goto(url, {'waitUntil': 'networkidle2'})
