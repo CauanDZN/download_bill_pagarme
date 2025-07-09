@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "app",
+      name: "download_bill_pagarme",
       script: "./venv/bin/hypercorn",
       args: "app:app --bind 0.0.0.0:5000",
       interpreter: "none",
