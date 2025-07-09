@@ -1,4 +1,5 @@
 from quart import Quart, send_file, abort
+from werkzeug.middleware.proxy_fix import ProxyFix
 import asyncio
 import os
 import re
@@ -6,6 +7,7 @@ from datetime import datetime
 from pyppeteer import launch
 
 app = Quart(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 def sanitize_filename(filename):
     return re.sub(r'[<>:"/\\|?*]', '_', filename)
