@@ -1,0 +1,9 @@
+services:
+  download_bill:
+    build: .
+    container_name: download_bill_pagarme
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    restart: unless-stopped
