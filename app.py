@@ -23,9 +23,9 @@ async def download_pdf_content(url, max_retries=3):
             await page.goto(url, {'waitUntil': 'networkidle2'})
 
             timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-            pdf_file_name = f"BOLETO_{timestamp}.pdf"
-            sanitized_pdf_file_name = sanitize_filename(pdf_file_name)
-            pdf_file_path = os.path.abspath(sanitized_pdf_file_name)
+            pdf_file_name = sanitize_filename(f"BOLETO_{timestamp}.pdf")
+            temp_dir = "/tmp"
+            pdf_file_path = os.path.join(temp_dir, pdf_file_name)
 
             await page.pdf({'path': pdf_file_path, 'format': 'A4'})
             await browser.close()
@@ -43,11 +43,24 @@ async def baixar_boleto(boleto_id):
     pdf_path = await download_pdf_content(url_boleto)
 
     if pdf_path and os.path.exists(pdf_path):
-        return await send_file(
+        async def cleanup_file():
+            try:
+                os.remove(pdf_path)
+                print(f"🧹 PDF apagado: {pdf_path}")
+            except Exception as e:
+                print(f"❌ Erro ao apagar PDF: {e}")
+
+        response = await send_file(
             pdf_path,
             as_attachment=True,
             attachment_filename=os.path.basename(pdf_path)
         )
+
+        @response.call_on_close
+        def on_close():
+            asyncio.create_task(cleanup_file())
+
+        return response
     else:
         abort(404, description="Não foi possível gerar o boleto PDF.")
 
