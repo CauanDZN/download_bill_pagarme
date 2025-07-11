@@ -1,0 +1,27 @@
+# Ignorar ambientes virtuais
+venv/
+env/
+.venv/
+
+# Ignorar bytecode/cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Ignorar arquivos de log e nohup
+nohup.out
+*.log
+
+# Ignorar arquivos PDF gerados
+*.pdf
+
+# Ignorar arquivos temporários e de sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar drivers e instaladores
+chromedriver*
+*.deb
+chrome-linux64/
+chromedriver-linux64/
+google-chrome-stable_current_amd64.de
