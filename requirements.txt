@@ -2,4 +2,6 @@ flask
 asyncio
 aiohttp
 requests
+quart
+hypercorn
 pyppeteer
