@@ -46,7 +46,7 @@ async def baixar_boleto(boleto_id):
         response = await send_file(
             pdf_path,
             as_attachment=True,
-            download_name=os.path.basename(pdf_path)
+            attachment_filename=os.path.basename(pdf_path)
         )
 
         async def cleanup_file():
